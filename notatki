@@ -1,0 +1,18 @@
+template< ... >
+struct x {
+    using value = ...;
+};
+
+template< ... >
+struct x {
+
+};
+
+
+x<...>::value
+
+struct True{};
+
+struct False{};
+
+constexpr
