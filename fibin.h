@@ -99,7 +99,7 @@ struct SumAux{
 template <typename T1, typename T2, typename... Rest>
 struct Sum{
     enum {
-        val = SumAux<T1>::val + SumAux<T2>::val + SumAux<Rest...>::val
+        val = SumAux<T1>::val + SumAux<T2, Rest...>::val
     };
 };
 
