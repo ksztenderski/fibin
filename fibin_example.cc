@@ -1,9 +1,13 @@
 #include "fibin.h"
-#include <cstdint>
 #include <iostream>
 
 int main() {
-    // Testing: lambda(x) {x + (Fib(1) + Fib(10)) + Fib(2)}(Fib(3))
+    std::cout << Fib<0>::val << std::endl;
+    std::cout << Lit<Fib<7>>::val << std::endl;
+    std::cout << Lit<True>::val << std::endl;
+    std::cout << Lit<False>::val << std::endl;
+
+    /*// Testing: lambda(x) {x + (Fib(1) + Fib(10)) + Fib(2)}(Fib(3))
     // Fib(0) = 0, Fib(1) = 1, Fib(2) = 1, Fib(3) = 2, Fib(10) = 55
     static_assert(59 == Fibin<uint64_t>::eval<Invoke<Lambda<Var("x"),
                   Sum<Ref<Var("x")>, Inc10<Lit<Fib<1>>>, Lit<Fib<2>>>>, Lit<Fib<3>>>>());
@@ -17,5 +21,7 @@ int main() {
     // Prints out to std::cout: "Fibin doesn't support: PKc"
     Fibin<const char*>::eval<Lit<Fib<0>>>();
 
-    std::cout << "Fibin works fine!" << std::endl;
+    std::cout << "Fibin works fine!" << std::endl;*/
+
+    return 0;
 }
