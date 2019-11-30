@@ -3,9 +3,13 @@
 
 int main() {
     std::cout << Fib<0>::val << std::endl;
-    std::cout << Lit<Fib<7>>::val << std::endl;
+    std::cout << Lit<Fib<5>>::val << std::endl;
     std::cout << Lit<True>::val << std::endl;
     std::cout << Lit<False>::val << std::endl;
+
+    std::cout << Sum<Lit<Fib<5>>, Lit<Fib<5>>, Lit<Fib<5>>, Lit<Fib<6>>>::val << std::endl;
+
+    //std::cout << sum(Lit<Fib<6>>(), 8) << std::endl;
 
     /*// Testing: lambda(x) {x + (Fib(1) + Fib(10)) + Fib(2)}(Fib(3))
     // Fib(0) = 0, Fib(1) = 1, Fib(2) = 1, Fib(3) = 2, Fib(10) = 55
