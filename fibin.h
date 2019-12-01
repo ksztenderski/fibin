@@ -87,9 +87,22 @@ struct Let : Function<uint64_t> {
 
 template<typename T1, typename T2>
 struct Eq {
-    static bool compare(T1 a, T2 b) {
-        return a == b;
-    }
+    constexpr static bool val = T1::val == T2::val;
+};
+
+template<bool flag, typename T1, typename T2>
+struct If_then_else {
+    typedef T1 Result;
+};
+
+template<typename T1, typename T2>
+struct If_then_else<false, T1, T2> {
+    typedef T2 Result;
+};
+
+template<bool Condition, typename Then, typename Else>
+struct If: Function<Then>{
+
 };
 
 template<typename ValueType>
