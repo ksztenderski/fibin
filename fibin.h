@@ -2,134 +2,137 @@
 #define FIBIN_FIBIN_H
 
 #include <vector>
+#include <iostream>
+
+#define BASE 36
+
+template<typename T>
+struct Value {
+    constexpr static T val = 0;
+};
+
+template<typename T>
+struct Function {
+    constexpr static T val = 0;
+
+    constexpr static void run() {}
+};
 
 template<int N>
-struct Fib {
+struct Fib : Value<uint64_t> {
     static_assert(N >= 0, "Fib's argument must not be negative!");
-    enum {
-        val = Fib<N - 1>::val + Fib<N - 2>::val
-    };
+
+    constexpr static uint64_t val = Fib<N - 1>::val + Fib<N - 2>::val;
 };
+
 template<>
-struct Fib<1> {
-    enum {
-        val = 1
-    };
+struct Fib<1> : Value<int> {
+    constexpr static int val = 1;
 };
+
 template<>
-struct Fib<0> {
-    enum {
-        val = 0
-    };
+struct Fib<0> : Value<int> {
 };
 
 struct True {
+    constexpr static bool val = true;
 };
 
 struct False {
+    constexpr static bool val = false;
 };
 
 template<typename T>
-struct Lit;
-
-template<int n>
-struct Lit<Fib<n>> {
-    enum {
-        val = Fib<n>::val
-    };
+struct Lit : Value<T> {
+    constexpr static auto val = T::val;
 };
+
+constexpr unsigned Var(const char *str) {
+    int i = 0;
+    unsigned res = 0;
+    if (str[0] == '\0') return 0;
+    while (i < 6 && str[i] != '\0') {
+        res *= BASE;
+        if (str[i] <= '9' && str[i] >= '0') {
+            res += str[i] - '0' + 1;
+        } else if (str[i] <= 'Z' && str[i] >= 'A') {
+            res += str[i] - 'A' + 11;
+        } else if (str[i] <= 'z' && str[i] >= 'a') {
+            res += str[i] - 'a' + 11;
+        } else {
+            return 0;
+        }
+        ++i;
+    }
+    if (str[i] != '\0') return 0;
+
+    return res;
+}
+
+template<unsigned Var>
+struct Ref : Function<uint64_t> {
+    constexpr static uint64_t val = 0;
+
+    /*static constexpr void set(uint64_t newValue) {
+        val = newValue;
+    }*/
+};
+
+/*template<unsigned Var, typename Value, typename Expression>
+struct Let : Function<uint64_t> {
+    static constexpr int run() {
+        Ref<Var>::set(12);
+    }
+};*/
+
+template<typename T1, typename T2>
+struct Eq {
+    static bool compare(T1 a, T2 b) {
+        return a == b;
+    }
+};
+
+template<typename ValueType>
+struct Fibin {
+    template<typename T>
+    constexpr void static eval() {
+        std::cout << "Fibin doesn't support: PKc" << std::endl;
+    }
+};
+
 template<>
-struct Lit<True> {
-    enum {
-        val = true
-    };
-};
-template<>
-struct Lit<False> {
-    enum {
-        val = false
-    };
+struct Fibin<unsigned long long> {
+    template<typename T>
+    constexpr unsigned long long static eval() {
+        return T::val;
+    }
 };
 
+template<typename T, typename... Rest>
+struct SumAux : Value<uint64_t> {
+    constexpr static uint64_t val = SumAux<T>::val + SumAux<Rest...>::val;
+};
 
-template <typename T, typename... Rest>
-struct SumAux {
-    enum {
-        val = SumAux<T>::val + SumAux<Rest...>::val
-    };
+template<typename T>
+struct SumAux<T> : Value<uint64_t> {
+    constexpr static uint64_t val = T::val;
 };
 
 
 template<typename T1, typename T2, typename... Rest>
-struct Sum {
-    enum {
-        val = SumAux<T1>::val + SumAux<T2, Rest...>::val
-    };
+struct Sum : Value<uint64_t> {
+    constexpr static uint64_t val = SumAux<T1>::val + SumAux<T2, Rest...>::val;
 };
 
 
 template<typename T>
-struct Inc1 {};
-
-template<int n>
-struct Inc1<Lit<Fib<n>>> {
-    enum {
-        val = Lit<Fib<n>>::val + Lit<Fib<1>>::val
-    };
+struct Inc1 {
+    constexpr static uint64_t val = T::val + Fib<1>::val;
 };
 
 template<typename T>
-struct Inc10 {};
-
-template<int n>
-struct Inc10<Lit<Fib<n>>> {
-    enum {
-        val = Lit<Fib<n>>::val + Lit<Fib<10>>::val
-    };
+struct Inc10 {
+    constexpr static uint64_t val = T::val + Fib<10>::val;
 };
-
-
-// getVal template
-template <typename T>
-struct getVal {};
-
-template <int n>
-struct getVal<Lit<Fib<n>>> {
-    enum {
-        val = Fib<n>::val
-    };
-};
-
-template<typename T>
-struct getVal<Inc1<T>> {
-    enum {
-        val = Inc1<T>::val
-    };
-};
-
-template<typename T>
-struct getVal<Inc10<T>> {
-    enum {
-        val = Inc10<T>::val
-    };
-};
-
-
-template<typename T1, typename T2, typename... Rest>
-struct getVal<Sum<T1, T2, Rest...>> {
-    enum {
-        val = Sum<T1,T2, Rest...>::val
-    };
-};
-
-template<typename T>
-struct SumAux<T> {
-    enum {
-        val = getVal<T>::val
-    };
-};
-
-template<typename T>
-struct Fibin;
 
 #endif //FIBIN_FIBIN_H
