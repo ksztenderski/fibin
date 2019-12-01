@@ -72,32 +72,36 @@ constexpr unsigned Var(const char *str) {
 
 template<unsigned Var>
 struct Ref {
-    constexpr static uint64_t val = 0;
+    static uint64_t val;
 
-    /*static constexpr void set(uint64_t newValue) {
+    static constexpr void set(uint64_t newValue) {
         val = newValue;
-    }*/
+    }
 };
 
-/*template<unsigned Var, typename Value, typename Expression>
-struct Let : Function<uint64_t> {
-    static constexpr int run() {
-        Ref<Var>::set(12);
+template<unsigned Var>
+uint64_t Ref<Var>::val = 0;
+
+template<unsigned Var, typename Value, typename Expression>
+struct Let {
+    static constexpr auto run() {
+        Ref<Var>::set(Value::val);
+        return Expression::val;
     }
-};*/
+};
 
 template<typename T1, typename T2>
 struct Eq {
     constexpr static bool val = T1::val == T2::val;
 };
 
-template<bool flag, typename T1, typename T2>
+template<uint64_t flag, typename T1, typename T2>
 struct If_then_else {
     typedef T1 Result;
 };
 
 template<typename T1, typename T2>
-struct If_then_else<false, T1, T2> {
+struct If_then_else<0, T1, T2> {
     typedef T2 Result;
 };
 
