@@ -6,7 +6,7 @@
 
 #define BASE 36
 
-template<typename T>
+/*template<typename T>
 struct Value {
     constexpr static T val = 0;
 };
@@ -16,7 +16,7 @@ struct Function {
     constexpr static T val = 0;
 
     constexpr static void run() {}
-};
+};*/
 
 template<int N>
 struct Fib {
@@ -71,7 +71,7 @@ constexpr unsigned Var(const char *str) {
 }
 
 template<unsigned Var>
-struct Ref : Function<uint64_t> {
+struct Ref {
     constexpr static uint64_t val = 0;
 
     /*static constexpr void set(uint64_t newValue) {
@@ -91,7 +91,7 @@ struct Eq {
     constexpr static bool val = T1::val == T2::val;
 };
 
-/*template<bool flag, typename T1, typename T2>
+template<bool flag, typename T1, typename T2>
 struct If_then_else {
     typedef T1 Result;
 };
@@ -102,9 +102,11 @@ struct If_then_else<false, T1, T2> {
 };
 
 template<typename Condition, typename Then, typename Else>
-struct If : Function<Then> {
-    constexpr static If_then_else<C> val = Condi
-};*/
+struct If {
+    typedef typename If_then_else<Condition::val, Then, Else>::Result tmp;
+
+    constexpr static uint64_t val = tmp::val;
+};
 
 template<typename ValueType, typename Enable = void>
 struct Fibin {

@@ -19,6 +19,8 @@ int main() {
 
     std::cout << Inc1<Lit<Fib<5>>>::val << std::endl;
 
+    std::cout << If<Lit<True>, Lit<Fib<1>>, Lit<Fib<0>>>::val << std::endl;
+
     /*// Testing: lambda(x) {x + (Fib(1) + Fib(10)) + Fib(2)}(Fib(3))
     // Fib(0) = 0, Fib(1) = 1, Fib(2) = 1, Fib(3) = 2, Fib(10) = 55
     static_assert(59 == Fibin<uint64_t>::eval<Invoke<Lambda<Var("x"),
