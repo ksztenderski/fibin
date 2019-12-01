@@ -101,11 +101,11 @@ struct If_then_else<false, T1, T2> {
 };
 
 template<bool Condition, typename Then, typename Else>
-struct If: Function<Then>{
+struct If : Function<Then> {
 
 };
 
-template<typename ValueType>
+template<typename ValueType, typename Enable = void>
 struct Fibin {
     template<typename T>
     constexpr void static eval() {
@@ -113,10 +113,10 @@ struct Fibin {
     }
 };
 
-template<>
-struct Fibin<unsigned long long> {
+template<typename ValueType>
+struct Fibin<ValueType, typename std::enable_if<std::is_integral_v<ValueType>>::type> {
     template<typename T>
-    constexpr unsigned long long static eval() {
+    constexpr ValueType static eval() {
         return T::val;
     }
 };

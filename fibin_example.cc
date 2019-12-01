@@ -6,8 +6,9 @@ int main() {
     std::cout << Lit<Fib<100>>::val << std::endl;
     std::cout << Lit<True>::val << std::endl;
     std::cout << Lit<False>::val << std::endl;
-    std::cout << Fibin<uint64_t>::eval<Lit<Fib<100>>>() << std::endl;
+    std::cout << Fibin<uint64_t>::eval<Lit<Fib<47>>>() << std::endl;
 
+    Fibin<const char *>::eval<Lit<Fib<47>>>();
 
     std::cout << Sum<Lit<Fib<2>>, Inc1<Lit<Fib<2>>>, Inc10<Lit<Fib<2>>>,
             Sum<Lit<Fib<1>>, Sum<Lit<Fib<2>>, Lit<Fib<2>>>>>::val << std::endl;
@@ -16,14 +17,7 @@ int main() {
 
     std::cout << Eq<Lit<Fib<0>>, Lit<Fib<1>>>::val << std::endl;
 
-    /* //std::cout << Inc1<Lit<Fib<5>>>::val << std::endl;
-     std::cout << Sum<Lit<Fib<2>>, Inc1<Lit<Fib<2>>>, Inc10<Lit<Fib<2>>>,
-             Sum<Lit<Fib<1>>, Sum<Lit<Fib<2>>, Lit<Fib<2>>>>>::val << std::endl;
-
-     static_assert(59 == Fibin<uint64_t>::eval<Invoke<Lambda<Var("x"),
-             Sum<Ref<Var("x")>, Inc10<Lit<Fib<1>>>, Lit<Fib<2>>>>, Lit<Fib<3>>>>());*/
-
-    //std::cout << sum(Lit<Fib<6>>(), 8) << std::endl;
+    std::cout << Inc1<Lit<Fib<5>>>::val << std::endl;
 
     /*// Testing: lambda(x) {x + (Fib(1) + Fib(10)) + Fib(2)}(Fib(3))
     // Fib(0) = 0, Fib(1) = 1, Fib(2) = 1, Fib(3) = 2, Fib(10) = 55
