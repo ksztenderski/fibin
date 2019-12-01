@@ -19,19 +19,20 @@ struct Function {
 };
 
 template<int N>
-struct Fib : Value<uint64_t> {
+struct Fib {
     static_assert(N >= 0, "Fib's argument must not be negative!");
 
     constexpr static uint64_t val = Fib<N - 1>::val + Fib<N - 2>::val;
 };
 
 template<>
-struct Fib<1> : Value<int> {
+struct Fib<1> {
     constexpr static int val = 1;
 };
 
 template<>
-struct Fib<0> : Value<int> {
+struct Fib<0> {
+    constexpr static int val = 0;
 };
 
 struct True {
@@ -43,7 +44,7 @@ struct False {
 };
 
 template<typename T>
-struct Lit : Value<T> {
+struct Lit {
     constexpr static auto val = T::val;
 };
 
@@ -90,7 +91,7 @@ struct Eq {
     constexpr static bool val = T1::val == T2::val;
 };
 
-template<bool flag, typename T1, typename T2>
+/*template<bool flag, typename T1, typename T2>
 struct If_then_else {
     typedef T1 Result;
 };
@@ -100,10 +101,10 @@ struct If_then_else<false, T1, T2> {
     typedef T2 Result;
 };
 
-template<bool Condition, typename Then, typename Else>
+template<typename Condition, typename Then, typename Else>
 struct If : Function<Then> {
-
-};
+    constexpr static If_then_else<C> val = Condi
+};*/
 
 template<typename ValueType, typename Enable = void>
 struct Fibin {
@@ -122,18 +123,18 @@ struct Fibin<ValueType, typename std::enable_if<std::is_integral_v<ValueType>>::
 };
 
 template<typename T, typename... Rest>
-struct SumAux : Value<uint64_t> {
+struct SumAux {
     constexpr static uint64_t val = SumAux<T>::val + SumAux<Rest...>::val;
 };
 
 template<typename T>
-struct SumAux<T> : Value<uint64_t> {
+struct SumAux<T> {
     constexpr static uint64_t val = T::val;
 };
 
 
 template<typename T1, typename T2, typename... Rest>
-struct Sum : Value<uint64_t> {
+struct Sum {
     constexpr static uint64_t val = SumAux<T1>::val + SumAux<T2, Rest...>::val;
 };
 
