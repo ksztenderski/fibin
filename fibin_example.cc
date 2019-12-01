@@ -14,6 +14,8 @@ int main() {
 
     std::cout << Sum<Lit<Fib<6>>, Lit<Fib<2>>>::val << std::endl;
 
+    std::cout << Eq<Lit<Fib<0>>, Lit<Fib<1>>>::val << std::endl;
+
     /* //std::cout << Inc1<Lit<Fib<5>>>::val << std::endl;
      std::cout << Sum<Lit<Fib<2>>, Inc1<Lit<Fib<2>>>, Inc10<Lit<Fib<2>>>,
              Sum<Lit<Fib<1>>, Sum<Lit<Fib<2>>, Lit<Fib<2>>>>>::val << std::endl;
