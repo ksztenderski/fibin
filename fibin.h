@@ -70,11 +70,16 @@ constexpr unsigned Var(const char *str) {
     return res;
 }
 
-uint64_t values[2176782336];
+template<unsigned n>
+struct Nr {
+    static uint64_t val;
+};
+template<unsigned n>
+uint64_t Nr<n>::val = 0;
 
 template<unsigned Var>
 struct Ref {
-    constexpr static uint64_t &val = values[Var];
+    constexpr static uint64_t &val = Nr<Var>::val;
 
     constexpr static void set(uint64_t newValue) {
         val = newValue;
@@ -83,8 +88,6 @@ struct Ref {
 
 template<unsigned Var, typename Value, typename Expression>
 struct Let {
-    constexpr static auto &val = Expression::val;
-
     constexpr static auto run() {
         Ref<Var>::set(Value::val);
         return Expression::val;

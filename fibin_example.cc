@@ -30,7 +30,9 @@ int main() {
 
     std::cout << Sum<Lit<True>, Lit<Fib<1>>>::val << std::endl;*/
 
-    std::cout << Let<Var("A"), Lit<Fib<13>>, Ref<Var("A")>>::run();
+    std::cout << Let<Var("A"), Lit<Fib<13>>, Ref<Var("A")>>::run() << std::endl;
+    std::cout << Let<Var("B"), Lit<Fib<5>>, Ref<Var("B")>>::run() << std::endl;
+    std::cout << Ref<Var("A")>::val << std::endl;
 
     /*// Testing: lambda(x) {x + (Fib(1) + Fib(10)) + Fib(2)}(Fib(3))
     // Fib(0) = 0, Fib(1) = 1, Fib(2) = 1, Fib(3) = 2, Fib(10) = 55
