@@ -7,7 +7,9 @@ int main() {
     std::cout << Lit<True>::val << std::endl;
     std::cout << Lit<False>::val << std::endl;
 
-    std::cout << Sum<Lit<Fib<5>>, Lit<Fib<5>>, Lit<Fib<5>>, Lit<Fib<6>>>::val << std::endl;
+    //std::cout << Inc1<Lit<Fib<5>>>::val << std::endl;
+    std::cout << Sum<Lit<Fib<2>>, Inc1<Lit<Fib<2>>>, Inc10<Lit<Fib<2>>>,
+    Sum<Lit<Fib<1>>, Sum<Lit<Fib<2>>, Lit<Fib<2>>>>>::val << std::endl;
 
     //std::cout << sum(Lit<Fib<6>>(), 8) << std::endl;
 

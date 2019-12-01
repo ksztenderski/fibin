@@ -5,7 +5,7 @@
 
 template<int N>
 struct Fib {
-    static_assert(N >= 0, "Fib's argument must be positive!");
+    static_assert(N >= 0, "Fib's argument must not be negative!");
     enum {
         val = Fib<N - 1>::val + Fib<N - 2>::val
     };
@@ -51,63 +51,81 @@ struct Lit<False> {
     };
 };
 
-/*
-template<typename T>
-inline T sum(T n) {
-    return n;
-}
 
-template<int n>
-inline int sum(Lit<Fib<n>>) {
-    return Lit<Fib<n>>::val;
-}
-
-template <typename T, typename... Args>
-inline int sum(T n, Args... args) {
-    return sum(n) + sum(args...);
-}
-*/
-
-/*
-template <typename ...Ts> struct Sum {};
-
-template <typename T, typename ... Ts>
-struct Sum<T, Ts...> : Sum<Ts...> {
-    Sum(T t, Ts... ts) : Sum<Ts...>(ts...), el(t) {}
-
-    T el;
-};
-
- */
-
-/*
-template <typename... Rest>
-struct SumAux{
-    enum {
-        val = 0
-    };
-};
-*/
 template <typename T, typename... Rest>
-struct SumAux{
+struct SumAux {
     enum {
         val = SumAux<T>::val + SumAux<Rest...>::val
     };
 };
 
 
-template <typename T1, typename T2, typename... Rest>
-struct Sum{
+template<typename T1, typename T2, typename... Rest>
+struct Sum {
     enum {
         val = SumAux<T1>::val + SumAux<T2, Rest...>::val
     };
 };
 
 
+template<typename T>
+struct Inc1 {};
+
 template<int n>
-struct SumAux<Lit<Fib<n>>> {
+struct Inc1<Lit<Fib<n>>> {
+    enum {
+        val = Lit<Fib<n>>::val + Lit<Fib<1>>::val
+    };
+};
+
+template<typename T>
+struct Inc10 {};
+
+template<int n>
+struct Inc10<Lit<Fib<n>>> {
+    enum {
+        val = Lit<Fib<n>>::val + Lit<Fib<10>>::val
+    };
+};
+
+
+// getVal template
+template <typename T>
+struct getVal {};
+
+template <int n>
+struct getVal<Lit<Fib<n>>> {
     enum {
         val = Fib<n>::val
+    };
+};
+
+template<typename T>
+struct getVal<Inc1<T>> {
+    enum {
+        val = Inc1<T>::val
+    };
+};
+
+template<typename T>
+struct getVal<Inc10<T>> {
+    enum {
+        val = Inc10<T>::val
+    };
+};
+
+
+template<typename T1, typename T2, typename... Rest>
+struct getVal<Sum<T1, T2, Rest...>> {
+    enum {
+        val = Sum<T1,T2, Rest...>::val
+    };
+};
+
+template<typename T>
+struct SumAux<T> {
+    enum {
+        val = getVal<T>::val
     };
 };
 
