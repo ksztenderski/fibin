@@ -13,13 +13,17 @@ int main() {
     std::cout << Sum<Lit<Fib<2>>, Inc1<Lit<Fib<2>>>, Inc10<Lit<Fib<2>>>,
             Sum<Lit<Fib<1>>, Sum<Lit<Fib<2>>, Lit<Fib<2>>>>>::val << std::endl;
 
-    std::cout << Sum<Lit<Fib<6>>, Lit<Fib<2>>>::val << std::endl;
+    std::cout << Eq<Sum<Lit<Fib<2>>, Inc1<Lit<Fib<2>>>, Inc10<Lit<Fib<2>>>,
+            Sum<Lit<Fib<1>>, Sum<Lit<Fib<2>>, Lit<Fib<2>>>>>, Sum<Lit<Fib<10>>, Lit<Fib<5>>, Lit<Fib<3>>>>::val << std::endl;
 
     std::cout << Eq<Lit<Fib<0>>, Lit<Fib<1>>>::val << std::endl;
 
     std::cout << Inc1<Lit<Fib<5>>>::val << std::endl;
 
-    std::cout << If<Lit<True>, Lit<Fib<1>>, Lit<Fib<0>>>::val << std::endl;
+    std::cout << If<Lit<True>, Inc1<Lit<Fib<5>>>, Lit<Fib<0>>>::val << std::endl;
+
+    std::cout << If<If<Lit<True>, Inc1<Lit<Fib<5>>>, Lit<False>>,
+            If<Lit<True>, Inc1<Lit<Fib<5>>>, Lit<Fib<0>>>, Inc10<Lit<Fib<50>>>>::val << std::endl;
 
     /*// Testing: lambda(x) {x + (Fib(1) + Fib(10)) + Fib(2)}(Fib(3))
     // Fib(0) = 0, Fib(1) = 1, Fib(2) = 1, Fib(3) = 2, Fib(10) = 55
