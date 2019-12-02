@@ -2,7 +2,10 @@
 #include <iostream>
 
 int main() {
-    std::cout << Fib<0>::val << std::endl;
+
+    std::cout << Fibin<int>::eval<Lit<Fib<3>>>() << std::endl;
+
+    /*std::cout << Fib<0>::val << std::endl;
     std::cout << Lit<Fib<100>>::val << std::endl;
     std::cout << Lit<True>::val << std::endl;
     std::cout << Lit<False>::val << std::endl;
@@ -39,7 +42,7 @@ int main() {
 
 
 
-    static_assert(Let<Var("A"), Lit<Fib<13>>, Ref<Var("A")>>::run());
+    static_assert(Let<Var("A"), Lit<Fib<13>>, Ref<Var("A")>>::run());*/
 
     /*// Testing: lambda(x) {x + (Fib(1) + Fib(10)) + Fib(2)}(Fib(3))
     // Fib(0) = 0, Fib(1) = 1, Fib(2) = 1, Fib(3) = 2, Fib(10) = 55
