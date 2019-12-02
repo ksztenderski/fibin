@@ -1,10 +1,11 @@
 #ifndef FIBIN_FIBIN_H
 #define FIBIN_FIBIN_H
 
-#include <vector>
 #include <iostream>
 
 #define BASE 36
+
+using var_t = unsigned;
 
 /*template<typename T>
 struct Value {
@@ -17,6 +18,18 @@ struct Function {
 
     constexpr static void run() {}
 };*/
+
+template<typename N, typename V, typename E>
+struct List {
+};
+
+struct EmptyEnvironment {
+};
+
+List<var_t Var, Value1, EmptyEnvironment>
+
+template<>
+struct
 
 template<int N>
 struct Fib {
@@ -48,9 +61,9 @@ struct Lit {
     constexpr static auto val = T::val;
 };
 
-constexpr unsigned Var(const char *str) {
+constexpr var_t Var(const char *str) {
     int i = 0;
-    unsigned res = 0;
+    var_t res = 0;
     if (str[0] == '\0') return 0;
     while (i < 6 && str[i] != '\0') {
         res *= BASE;
@@ -77,7 +90,7 @@ struct Nr {
 template<unsigned n>
 uint64_t Nr<n>::val = 0;
 
-template<unsigned Var>
+template<var_t Var>
 struct Ref {
     constexpr static uint64_t &val = Nr<Var>::val;
 
@@ -86,8 +99,10 @@ struct Ref {
     }
 };
 
-template<unsigned Var, typename Value, typename Expression>
+template<var_t Var, typename Value, typename Expression>
 struct Let {
+    constexpr static auto result = List<Var, Value::val, Expression>
+
     constexpr static auto run() {
         Ref<Var>::set(Value::val);
         return Expression::val;
@@ -99,13 +114,13 @@ struct Eq {
     constexpr static bool val = T1::val == T2::val;
 };
 
-template<uint64_t flag, typename T1, typename T2>
+template<bool flag, typename T1, typename T2>
 struct If_then_else {
     typedef T1 Result;
 };
 
 template<typename T1, typename T2>
-struct If_then_else<0, T1, T2> {
+struct If_then_else<false, T1, T2> {
     typedef T2 Result;
 };
 
@@ -116,21 +131,26 @@ struct If {
     constexpr static uint64_t val = tmp::val;
 };
 
-template<typename ValueType, typename Enable = void>
+template<typename ValueType>
 struct Fibin {
+    template<typename T, typename X = ValueType, std::enable_if_t<std::is_integral<X>::value, int> = 0>
+    constexpr std::enable_if_t<std::is_integral<X>::value, X> static eval() {
+        return T::val;
+    }
+
     template<typename T>
-    constexpr void static eval() {
+    constexpr std::enable_if_t<!std::is_integral<ValueType>::value> static eval() {
         std::cout << "Fibin doesn't support: PKc" << std::endl;
     }
 };
 
-template<typename ValueType>
+/*template<typename ValueType>
 struct Fibin<ValueType, typename std::enable_if<std::is_integral_v<ValueType>>::type> {
     template<typename T>
     constexpr ValueType static eval() {
         return T::val;
     }
-};
+};*/
 
 template<typename T, typename... Rest>
 struct SumAux {
