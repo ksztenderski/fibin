@@ -57,33 +57,32 @@ struct Inc10 {
 struct EmptyEnv;
 
 
-template <unsigned Name, typename Value, typename Env>
-struct List {};
+template<unsigned Name, typename Value, typename Env>
+struct List {
+};
 
-template <unsigned Name, typename Env>
-struct Find {};
+template<unsigned Name, typename Env>
+struct Find {
+};
 
-template <unsigned Name>
-struct Find <Name,EmptyEnv> {};
+template<unsigned Name>
+struct Find<Name, EmptyEnv> {
+};
 
-template <unsigned Name, typename Value, typename Env>
-struct Find <Name, List<Name,Value,Env> >
-{
+template<unsigned Name, typename Value, typename Env>
+struct Find<Name, List<Name, Value, Env> > {
     Value typedef result;
 };
 
-template <unsigned Name, unsigned Name2, typename Value2, typename Env>
-struct Find <Name, List<Name2,Value2,Env> >
-{
-    typename Find<Name,Env> :: result typedef result;
+template<unsigned Name, unsigned Name2, typename Value2, typename Env>
+struct Find<Name, List<Name2, Value2, Env> > {
+    typename Find<Name, Env>::result typedef result;
 };
 
-template <unsigned Name, typename Value, typename Env>
+template<unsigned Name, typename Value, typename Env>
 struct Let {
     using result = List<Name, Value, Env>;
 };
-
-
 
 
 constexpr bool properVar(const char *str) {
@@ -99,7 +98,7 @@ constexpr bool properVar(const char *str) {
 }
 
 // constexpr to calculate the length of a string
-constexpr size_t str_len(const char * p_str) {
+constexpr size_t str_len(const char *p_str) {
     return (*p_str == '\0') ? 0 : str_len(p_str + 1) + 1;
 }
 
@@ -125,6 +124,7 @@ constexpr var_t Var(const char *str) {
 
     return res;
 }
+
 /*
 template<var_t Var>
 struct Ref {
@@ -173,40 +173,30 @@ struct If {
 template<typename ValueType>
 class Fibin {
 private:
-
-    template <ValueType N>
-    struct Fib
-    {
-        static constexpr ValueType value = Fib<N-1>::value + Fib<N-2>::value;
-    };
-
-    template<>
-    struct Fib<1> {
-        static constexpr ValueType value = 1;
-    };
-
-    template<>
-    struct Fib<0> {
-        static constexpr ValueType value = 0;
-    };
-
-    template<typename T>
-    struct Lit : std::false_type{};
-
-    template<ValueType N>
-    struct Lit<Fib<N>> {
-        static constexpr ValueType value = Fib<N>::value;
-    };
+    static constexpr ValueType fib(int N) {
+        if (N == 0) return 0;
+        if (N == 1) return 1;
+        return fib(N - 1) + fib(N - 2);
+    }
 
     template<typename T>
     struct Eval {
     };
 
-    template<typename T>
-    struct Eval<Lit<T>> {
-        using result = T;
+    template<int N>
+    struct Eval<Fib<N>> {
+        static constexpr ValueType value = fib(N);
     };
 
+    template<int N>
+    struct Eval<Lit<Fib<N>>> {
+        using result = Eval<Fib<N>>;
+    };
+
+    template<typename T>
+    struct Eval<Lit<T>> {
+        using result =T;
+    };
 
 public:
     template<typename Expr, typename X = ValueType, typename std::enable_if_t<std::is_integral<X>::value, int> = 0>
@@ -218,7 +208,6 @@ public:
     static void eval() {
         std::cout << "Fibin doesn't support: " << typeid(X).name() << std::endl;
     }
-
 
 
 };
