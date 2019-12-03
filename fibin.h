@@ -3,22 +3,13 @@
 
 #include <iostream>
 #include <cstdint>
+#include <typeinfo>
 
 #define BASE 37
 
 using var_t = unsigned;
 
-template<var_t Var, typename Value, typename Environment>
-struct List {
-};
 
-struct Environment {
-};
-
-/*List<var_t Var, typename Value, EmptyEnvironment>
-
-template<>
-struct*/
 
 template<int N>
 struct Fib {
@@ -53,13 +44,47 @@ struct Sum {
 
 template<typename T>
 struct Inc1 {
-    constexpr static uint64_t val = T::val + Fib<1>::val;
+    //constexpr static uint64_t val = T::val + Fib<1>::val;
 };
 
 template<typename T>
 struct Inc10 {
-    constexpr static uint64_t val = T::val + Fib<10>::val;
+    //constexpr static uint64_t val = T::val + Fib<10>::val;
 };
+
+//rzeczy do refa
+
+struct EmptyEnv;
+
+
+template <unsigned Name, typename Value, typename Env>
+struct List {};
+
+template <unsigned Name, typename Env>
+struct Find {};
+
+template <unsigned Name>
+struct Find <Name,EmptyEnv> {};
+
+template <unsigned Name, typename Value, typename Env>
+struct Find <Name, List<Name,Value,Env> >
+{
+    Value typedef result;
+};
+
+template <unsigned Name, unsigned Name2, typename Value2, typename Env>
+struct Find <Name, List<Name2,Value2,Env> >
+{
+    typename Find<Name,Env> :: result typedef result;
+};
+
+template <unsigned Name, typename Value, typename Env>
+struct Let {
+    using result = List<Name, Value, Env>;
+};
+
+
+
 
 constexpr bool properVar(const char *str) {
     if (str[0] == '\0') return false;
@@ -73,7 +98,13 @@ constexpr bool properVar(const char *str) {
     return str[i] == '\0';
 }
 
+// constexpr to calculate the length of a string
+constexpr size_t str_len(const char * p_str) {
+    return (*p_str == '\0') ? 0 : str_len(p_str + 1) + 1;
+}
+
 constexpr var_t Var(const char *str) {
+
     int i = 0;
     var_t res = 0;
     if (str[0] == '\0') return 0;
@@ -94,7 +125,7 @@ constexpr var_t Var(const char *str) {
 
     return res;
 }
-
+/*
 template<var_t Var>
 struct Ref {
     constexpr static uint64_t &val = Nr<Var>::val;
@@ -120,7 +151,7 @@ template<typename T1, typename T2>
 struct Eq {
     constexpr static bool val = T1::val == T2::val;
 };
-
+*/
 template<bool flag, typename T1, typename T2>
 struct If_then_else {
     typedef T1 Result;
@@ -138,30 +169,57 @@ struct If {
     using val = typename tmp::val;
 };
 
-template<typename ValueType, typename Enable = void>
-struct Fibin {
-    template<typename T>
-    constexpr static void eval() {
-        std::cout << "Fibin doesn't support: PKc" << std::endl;
-    }
-};
 
 template<typename ValueType>
-class Fibin<ValueType, typename std::enable_if<std::is_integral_v<ValueType>>::type> {
+class Fibin {
 private:
 
-    constexpr ValueType lit(int n) {
-        return fib(n);
-    }
-
-public:
-    template<typename T>
-    constexpr ValueType static eval() {
-    }
+    template <ValueType N>
+    struct Fib
+    {
+        static constexpr ValueType value = Fib<N-1>::value + Fib<N-2>::value;
+    };
 
     template<>
-    constexpr ValueType static eval<Sum>() {
+    struct Fib<1> {
+        static constexpr ValueType value = 1;
+    };
+
+    template<>
+    struct Fib<0> {
+        static constexpr ValueType value = 0;
+    };
+
+    template<typename T>
+    struct Lit : std::false_type{};
+
+    template<ValueType N>
+    struct Lit<Fib<N>> {
+        static constexpr ValueType value = Fib<N>::value;
+    };
+
+    template<typename T>
+    struct Eval {
+    };
+
+    template<typename T>
+    struct Eval<Lit<T>> {
+        using result = T;
+    };
+
+
+public:
+    template<typename Expr, typename X = ValueType, typename std::enable_if_t<std::is_integral<X>::value, int> = 0>
+    static X eval() {
+        return Eval<Expr>::result::value;
     }
+
+    template<typename Expr, typename X = ValueType, typename std::enable_if_t<!std::is_integral<X>::value, int> = 0>
+    static void eval() {
+        std::cout << "Fibin doesn't support: " << typeid(X).name() << std::endl;
+    }
+
+
 
 };
 

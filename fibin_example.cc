@@ -3,7 +3,7 @@
 
 int main() {
 
-    std::cout << Fibin<int>::eval<Lit<Fib<3>>>() << std::endl;
+    Fibin<int>::eval<Lit<Fib<10>>>();
 
     /*std::cout << Fib<0>::val << std::endl;
     std::cout << Lit<Fib<100>>::val << std::endl;
