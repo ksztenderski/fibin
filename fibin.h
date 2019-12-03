@@ -9,48 +9,30 @@
 
 using var_t = unsigned;
 
+
+
 template<int N>
 struct Fib {
 };
 
 struct True {
-    static constexpr bool value = true;
 };
 
 struct False {
-    static constexpr bool value = false;
 };
 
 template<typename T>
-struct Lit {
-};
-
-template<typename T, typename... Rest>
-struct SumAux {
-    constexpr static uint64_t val = SumAux<T>::val + SumAux<Rest...>::val;
-};
-
-template<typename T>
-struct SumAux<T> {
-    constexpr static uint64_t val = T::val;
-};
-
+struct Lit {};
 
 template<typename T1, typename T2, typename... Rest>
-struct Sum {
-    constexpr static uint64_t val = SumAux<T1>::val + SumAux<T2, Rest...>::val;
-};
+struct Sum {};
 
 
 template<typename T>
-struct Inc1 {
-    //constexpr static uint64_t val = T::val + Fib<1>::val;
-};
+struct Inc1 {};
 
 template<typename T>
-struct Inc10 {
-    //constexpr static uint64_t val = T::val + Fib<10>::val;
-};
+struct Inc10 {};
 
 //rzeczy do refa
 
@@ -145,28 +127,12 @@ struct Let {
         return Expression::val;
     }
 };
-
-template<typename T1, typename T2>
-struct Eq {
-    constexpr static bool val = T1::val == T2::val;
-};
 */
-template<bool flag, typename T1, typename T2>
-struct If_then_else {
-    typedef T1 Result;
-};
-
 template<typename T1, typename T2>
-struct If_then_else<false, T1, T2> {
-    typedef T2 Result;
-};
+struct Eq {};
 
 template<typename Condition, typename Then, typename Else>
-struct If {
-    typedef typename If_then_else<Condition::val, Then, Else>::Result tmp;
-
-    using val = typename tmp::val;
-};
+struct If {};
 
 
 template<typename ValueType>
@@ -189,23 +155,88 @@ private:
 
     template<int N>
     struct Eval<Lit<Fib<N>>> {
-        using result = Eval<Fib<N>>;
+        static constexpr ValueType value = Eval<Fib<N>>::value;
     };
 
     template<typename T>
     struct Eval<Lit<T>> {
-        using result =T;
+        static constexpr ValueType value = Eval<T>::value;
     };
+
+    template<>
+    struct Eval<True> {
+        static constexpr bool value = true;
+    };
+
+    template<>
+    struct Eval<False> {
+        static constexpr bool value = false;
+    };
+
+    template<typename T>
+    struct Eval<Inc1<T>> {
+        static constexpr ValueType value = Eval<Fib<1>>::value + Eval<T>::value;
+    };
+
+    template<typename T>
+    struct Eval<Inc10<T>> {
+        static constexpr ValueType value = Eval<Fib<10>>::value + Eval<T>::value;
+    };
+
+    template<typename T1, typename T2>
+    struct Eval<Eq<T1, T2>> {
+        static constexpr bool value = Eval<T1>::value == Eval<T2>::value;
+    };
+
+    template<typename T, typename... Rest>
+    struct SumAux {
+        constexpr static ValueType value = SumAux<T>::value + SumAux<Rest...>::value;
+    };
+
+    template<typename T>
+    struct SumAux<T> {
+        constexpr static ValueType value = Eval<T>::value;
+    };
+
+    template<typename T1, typename T2, typename... Rest>
+    struct Eval<Sum<T1, T2, Rest...>> {
+            static constexpr ValueType value = SumAux<T1>::value + SumAux<T2, Rest...>::value;
+    };
+
+    /*template<bool flag, typename T1, typename T2>
+    struct If_then_else {
+        typedef T1 Result;
+    };
+
+    template<typename T1, typename T2>
+    struct If_then_else<false, T1, T2> {
+        typedef T2 Result;
+    };*/
+    template<bool flag, typename T1, typename T2>
+    struct If_then_else {
+        static constexpr ValueType value = Eval<T1>::value;
+    };
+
+    template<typename T1, typename T2>
+    struct If_then_else<false, T1, T2> {
+        static constexpr ValueType value = Eval<T2>::value;
+    };
+
+    template<typename Condition, typename Then, typename Else>
+    struct Eval<If<Condition, Then, Else>> {
+        static constexpr ValueType value = If_then_else<Eval<Condition>::value, Then, Else>::value;
+    };
+
 
 
 public:
     template<typename Expr, typename X = ValueType, typename std::enable_if_t<std::is_integral<X>::value, int> = 0>
-    static X eval() {
-        return Eval<Expr>::result::value;
+    static constexpr X eval() {
+        return Eval<Expr>::value;
     }
 
     template<typename Expr, typename X = ValueType, typename std::enable_if_t<!std::is_integral<X>::value, int> = 0>
-    static void eval() {
+    static constexpr void eval() {
         std::cout << "Fibin doesn't support: " << typeid(X).name() << std::endl;
     }
 
