@@ -28,12 +28,17 @@ template<typename T1, typename T2, typename... Rest>
 struct Sum {};
 
 
-template<typename T>
-struct Inc1 {};
+template<typename Arg>
+struct Inc1 {
+};
 
-template<typename T>
-struct Inc10 {};
+template<typename Arg>
+struct Inc10 {
+};
 
+template<typename Left, typename Right>
+struct Eq {
+};
 //rzeczy do refa
 
 struct EmptyEnv;
@@ -148,39 +153,18 @@ private:
     struct Eval {
     };
 
+    template<typename Expression, typename Env>
+    struct Get {
+    };
+
     template<int N>
     struct Eval<Fib<N>> {
         static constexpr ValueType value = fib(N);
     };
 
-    template<int N>
-    struct Eval<Lit<Fib<N>>> {
-        static constexpr ValueType value = Eval<Fib<N>>::value;
-    };
-
-    template<typename T>
-    struct Eval<Lit<T>> {
-        static constexpr ValueType value = Eval<T>::value;
-    };
-
-    template<>
-    struct Eval<True> {
-        static constexpr bool value = true;
-    };
-
-    template<>
-    struct Eval<False> {
-        static constexpr bool value = false;
-    };
-
-    template<typename T>
-    struct Eval<Inc1<T>> {
-        static constexpr ValueType value = Eval<Fib<1>>::value + Eval<T>::value;
-    };
-
-    template<typename T>
-    struct Eval<Inc10<T>> {
-        static constexpr ValueType value = Eval<Fib<10>>::value + Eval<T>::value;
+    template<int N, typename Env>
+    struct Eval<Lit<Fib<N>>, Env> {
+        using result = Get<Fib<N>, Env>;
     };
 
     template<typename T1, typename T2>
@@ -188,9 +172,79 @@ private:
         static constexpr bool value = Eval<T1>::value == Eval<T2>::value;
     };
 
+    template<typename T, typename ...Types, typename Env>
+    static ValueType sum() {
+        return Eval<T, Env>::value + sum<Types..., Env>();
+    }
+
+    template<typename T1, typename T2, typename... Rest, typename Env>
+    struct Get<Sum<T1, T2, Rest...>, Env> {
+        static constexpr ValueType value = sum<T1, T2, Rest..., Env>();
+    };
+
+    template<typename T1, typename T2, typename... Rest, typename Env>
+    struct Eval<Sum<T1, T2, Rest...>, Env> {
+        using result = Get<Sum<T1, T2, Rest...>, Env>;
+    };
+
+    template<int N, typename T, typename Env>
+    static constexpr ValueType inc() {
+        return Get<Fib<N>, Env>::value + Get<T, Env>::value;
+    }
+
+    template<typename T, typename Env>
+    struct Get<Inc1<T>, Env> {
+        static constexpr ValueType value = inc<1, T, Env>();
+    };
+
+    template<typename T, typename Env>
+    struct Get<Inc10<T>, Env> {
+        static constexpr ValueType value = inc<10, T, Env>();
+    };
+
+    template<typename T, typename Env>
+    struct Eval<Inc1<T>, Env> {
+        using result = Get<Inc1<T>, Env>;
+    };
+
+    template<typename T, typename Env>
+    struct Eval<Inc10<T>, Env> {
+        using result = Get<Inc10<T>, Env>;
+    };
+
+    template<bool flag, typename T1, typename T2>
+    struct If_then_else {
+        typedef T1 result;
+    };
+    template<typename T1, typename T2>
+    struct If_then_else<false, T1, T2> {
+        typedef T2 result;
+    };
+
+    template<typename T1, typename T2, typename Env>
+    struct Eval<Eq<T1, T2>, Env> {
+        using result = typename If_then_else<Eval<T1, Env>::result::value ==
+                                             Eval<T2, Env>::result::value, True, False>::result;
+    };
+
     template<typename T, typename... Rest>
     struct SumAux {
         constexpr static ValueType value = SumAux<T>::value + SumAux<Rest...>::value;
+    };
+
+    template<typename Then, typename Else, typename Env>
+    struct Eval<If<True, Then, Else>, Env> {
+        using result = typename Eval<Then, Env>::result;
+    };
+
+    template<typename Then, typename Else, typename Env>
+    struct Eval<If<False, Then, Else>, Env> {
+        using result = typename Eval<Else, Env>::result;
+    };
+
+    template<typename Condition, typename Then, typename Else, typename Env>
+    struct Eval<If<Condition, Then, Else>, Env> {
+        using result = typename Eval<If<typename Eval<Condition, Env>::result, Then, Else>, Env>::result;
     };
 
     template<typename T>
@@ -198,9 +252,10 @@ private:
         constexpr static ValueType value = Eval<T>::value;
     };
 
-    template<typename T1, typename T2, typename... Rest>
-    struct Eval<Sum<T1, T2, Rest...>> {
-            static constexpr ValueType value = SumAux<T1>::value + SumAux<T2, Rest...>::value;
+    // TODO
+    template<var_t Var, typename Body>
+    struct Eval<Lambda<Var, Body>> {
+        using result = Closure<Lambda<Var, Body>, EmptyEnv>;
     };
 
     /*template<bool flag, typename T1, typename T2>
@@ -239,8 +294,6 @@ public:
     static constexpr void eval() {
         std::cout << "Fibin doesn't support: " << typeid(X).name() << std::endl;
     }
-
-
 };
 
 #endif //FIBIN_FIBIN_H
