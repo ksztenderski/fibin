@@ -231,7 +231,7 @@ private:
 
 public:
     template<typename Expr, typename X = ValueType, typename std::enable_if_t<std::is_integral<X>::value, int> = 0>
-    static constexpr X eval() {
+    static constexpr ValueType eval() {
         return Eval<Expr>::value;
     }
 
