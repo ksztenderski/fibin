@@ -3,7 +3,9 @@
 
 int main() {
 
-    Fibin<int>::eval<Lit<Fib<10>>>();
+    //std::cout << Fibin<int>::eval<Eq<Inc10<Lit<Fib<10>>>, Sum<Lit<Fib<7>>, Lit<Fib<10>>>>>() << std::endl;
+    //static_assert(1 == Fibin<uint8_t>::eval<If<Lit<False>, Lit<Fib<0>>, Lit<Fib<1>>>>());
+    std::cout << Fibin<u_int8_t>::eval<If<Lit<True>, Lit<Fib<0>>, Lit<Fib<1>>>>() << std::endl;
 
     /*std::cout << Fib<0>::val << std::endl;
     std::cout << Lit<Fib<100>>::val << std::endl;
