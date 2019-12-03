@@ -9,16 +9,16 @@
 
 using var_t = unsigned;
 
-
-
 template<int N>
 struct Fib {
 };
 
 struct True {
+    static constexpr bool value = true;
 };
 
 struct False {
+    static constexpr bool value = false;
 };
 
 template<typename T>
@@ -57,29 +57,29 @@ struct Inc10 {
 struct EmptyEnv;
 
 
-template<unsigned Name, typename Value, typename Env>
+template<var_t Name, typename Value, typename Env>
 struct List {
 };
 
-template<unsigned Name, typename Env>
+template<var_t Name, typename Env>
 struct Find {
 };
 
-template<unsigned Name>
+template<var_t Name>
 struct Find<Name, EmptyEnv> {
 };
 
-template<unsigned Name, typename Value, typename Env>
+template<var_t Name, typename Value, typename Env>
 struct Find<Name, List<Name, Value, Env> > {
     Value typedef result;
 };
 
-template<unsigned Name, unsigned Name2, typename Value2, typename Env>
+template<var_t Name, var_t Name2, typename Value2, typename Env>
 struct Find<Name, List<Name2, Value2, Env> > {
     typename Find<Name, Env>::result typedef result;
 };
 
-template<unsigned Name, typename Value, typename Env>
+template<var_t Name, typename Value, typename Env>
 struct Let {
     using result = List<Name, Value, Env>;
 };
@@ -103,7 +103,6 @@ constexpr size_t str_len(const char *p_str) {
 }
 
 constexpr var_t Var(const char *str) {
-
     int i = 0;
     var_t res = 0;
     if (str[0] == '\0') return 0;
@@ -197,6 +196,7 @@ private:
     struct Eval<Lit<T>> {
         using result =T;
     };
+
 
 public:
     template<typename Expr, typename X = ValueType, typename std::enable_if_t<std::is_integral<X>::value, int> = 0>
