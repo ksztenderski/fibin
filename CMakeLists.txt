@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.10)
 project(Fibin)
 
 set(GCC_COVERAGE_COMPILE_FLAGS "-Wall -Wextra -std=c++17 -O2 -lstdc++")

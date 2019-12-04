@@ -4,10 +4,13 @@
 #include <iostream>
 #include <typeinfo>
 #include <cassert>
+#include <cstdint>
 
+// Stała używana przy hashowaniu w Var.
 #define BASE 37
 
-using var_t = unsigned;
+// Typ wynikowy funkcji Var.
+using var_t = uint32_t;
 
 template<int N>
 struct Fib {
@@ -64,10 +67,12 @@ constexpr bool properVar(const char *str) {
     int i = 0;
     while (i < 6 && str[i] != '\0') {
         if (str[i] < '0' || (str[i] > '9' && str[i] < 'A') ||
-            (str[i] > 'Z' && str[i] < 'a') || str[i] > 'z')
-            return false;
+            (str[i] > 'Z' && str[i] < 'a') || str[i] > 'z') {
+                return false;
+            }
         ++i;
     }
+
     return str[i] == '\0';
 }
 
@@ -200,6 +205,7 @@ private:
     struct If_then_else {
         typedef T1 result;
     };
+
     template<typename T1, typename T2>
     struct If_then_else<false, T1, T2> {
         typedef T2 result;
@@ -250,7 +256,6 @@ private:
     struct Apply<Closure<Lambda<Var, Body>, Env>, Value> {
         using result = typename Eval<Body, List<Var, Value, Env> >::result;
     };
-
 
 public:
     template<typename Expr, typename X = ValueType, typename std::enable_if_t<std::is_integral<X>::value, int> = 0>

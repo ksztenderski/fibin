@@ -108,6 +108,8 @@ Lambda<
 int main(){
     test_fib();
 
+    //std::cout << FB::eval<Invoke<SquareN, Lit<Fib<5>>>>() << std::endl;
+
     static_assert(FB::eval<If<Lit<False>, Lit<Fib<10>>, Lit<Fib<11>>>>() == 89);
     static_assert(FB::eval<If< Eq<L<1>, L<2>>, L<10>, L<11> >>() == 55);
     static_assert(FB::eval<If< Eq<L<1>, L<3>>, L<10>, L<11> >>() == 89);
@@ -172,6 +174,7 @@ int main(){
 
     static_assert(2 == Fibin<unsigned>::eval<Invoke<Let<Var("x"), Lit<Fib<1>>, Lambda<Var("x"), Ref<Var("x")> > >, Lit<Fib<3>> > >());
 
+    
 
     //// TO NIE MUSI
     /*using FunctionComparison =
@@ -192,43 +195,44 @@ int main(){
     >;
     static_assert(55 == FB::eval<FunctionComparison>());*/
 
+        // DO PRZEMYŚLENIA
+//     using Ycombinator =
+//     Lambda<
+//             Var("f"),
+//             Invoke<
+//                     Lambda<
+//                             Var("x"),
+//                             Invoke<
+//                                     Ref<Var("x")>,
+//                                     Ref<Var("x")>
+//                             >
+//                     >,
+//                     Lambda<
+//                             Var("x"),
+//                             Invoke<
+//                                     Ref<Var("f")>,
+//                                     Lambda<
+//                                             Var("args"),
+//                                             Invoke<
+//                                                     Invoke<
+//                                                             Ref<Var("x")>,
+//                                                             Ref<Var("x")>
+//                                                     >,
+//                                                     Ref<Var("args")>>>>>>>;
 
-    using Ycombinator =
-    Lambda<
-            Var("f"),
-            Invoke<
-                    Lambda<
-                            Var("x"),
-                            Invoke<
-                                    Ref<Var("x")>,
-                                    Ref<Var("x")>
-                            >
-                    >,
-                    Lambda<
-                            Var("x"),
-                            Invoke<
-                                    Ref<Var("f")>,
-                                    Lambda<
-                                            Var("args"),
-                                            Invoke<
-                                                    Invoke<
-                                                            Ref<Var("x")>,
-                                                            Ref<Var("x")>
-                                                    >,
-                                                    Ref<Var("args")>>>>>>>;
+//     static_assert(
+//             Fibin<uint64_t>::eval<Invoke<
+//                     Invoke<Ycombinator, SquareN<45>>,
+//                     Lit<Fib<1>>
+//             >>() == 2025);
 
-    static_assert(
-            Fibin<uint64_t>::eval<Invoke<
-                    Invoke<Ycombinator, SquareN<45>>,
-                    Lit<Fib<1>>
-            >>() == 2025);
+//     static_assert(
+//             Fibin<uint64_t>::eval<Invoke<
+//                     Invoke<Ycombinator, SquareN<103>>,
+//                     Lit<Fib<1>>
+//             >>() == 103*103);
 
-    static_assert(
-            Fibin<uint64_t>::eval<Invoke<
-                    Invoke<Ycombinator, SquareN<103>>,
-                    Lit<Fib<1>>
-            >>() == 103*103);
-
+        
     // Prints out to std::cout: "Fibin doesn't support: PKc"
     Fibin<const char*>::eval<Lit<Fib<0>>>();
 }
