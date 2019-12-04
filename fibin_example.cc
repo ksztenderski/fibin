@@ -2,19 +2,19 @@
 #include <iostream>
 
 int main() {
-    std::cout << Fibin<int>::eval<Sum<Lit<Fib<1>>, Lit<Fib<2>>>>() << std::endl;
+    /*std::cout << Fibin<int>::eval<Sum<Lit<Fib<1>>, Lit<Fib<2>>>>() << std::endl;
 
     std::cout << Fibin<int>::eval<Inc1<Lit<Fib<0>>>>() << std::endl;
 
     static_assert(1 == Fibin<uint8_t>::eval<If<Lit<False>, Lit<Fib<0>>, Lit<Fib<1>>>>());
 
     std::cout << Fibin<int>::eval<If<Lit<True>, Lit<Fib<0>>, Lit<Fib<1>>>>()
+              << std::endl;*/
+
+    std::cout << Fibin<int>::eval<Invoke<Lambda<Var("a"), Ref<Var("a")>>, Sum<Lit<Fib<5>>, Lit<Fib<6>>>>>()
               << std::endl;
 
-    std::cout << Fibin<int>::eval<Invoke<Lambda<Var("a"), Ref<Var("a")>>, Lit<Fib<0>>>>() << std::endl;
-
-
-    static_assert(Var("1") != 0);
+    /*static_assert(Var("1") != 0);
 
     // Testing: lambda(x) {x + (Fib(1) + Fib(10)) + Fib(2)}(Fib(3))
     // Fib(0) = 0, Fib(1) = 1, Fib(2) = 1, Fib(3) = 2, Fib(10) = 55
@@ -30,7 +30,7 @@ int main() {
     // Prints out to std::cout: "Fibin doesn't support: PKc"
     Fibin<const char *>::eval<Lit<Fib<0>>>();
 
-    std::cout << "Fibin works fine!" << std::endl;
+    std::cout << "Fibin works fine!" << std::endl;*/
 
     return 0;
 }

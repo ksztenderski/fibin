@@ -119,15 +119,11 @@ private:
     struct SumAux<T> {
     };
 
-    template<typename Proc, typename Value>
+    template<typename Proc, typename Value, typename Env>
     struct Apply {
     };
 
     struct EmptyEnv;
-
-    template<typename Lam, typename Env>
-    struct Closure {
-    };
 
     template<var_t Name, typename Value, typename Env>
     struct List {
@@ -234,17 +230,16 @@ private:
 
     template<var_t Var, typename Body, typename Env>
     struct Eval<Lambda<Var, Body>, Env> {
-        using result = Closure<Lambda<Var, Body>, Env>;
     };
 
     template<typename Fun, typename Param, typename Env>
     struct Eval<Invoke<Fun, Param>, Env> {
-        using result = typename Apply<typename Eval<Fun, Env>::result, Param>::result;
+        using result = typename Apply<Fun, Param, Env>::result;
     };
 
     template<var_t Var, typename Body, typename Value, typename Env>
-    struct Apply<Closure<Lambda<Var, Body>, Env>, Value> {
-        using result = typename Eval<Body, List<Var, Value, Env> >::result;
+    struct Apply<Lambda<Var, Body>, Value, Env> {
+        using result = typename Eval<Body, List<Var, Value, Env>>::result;
     };
 
 
