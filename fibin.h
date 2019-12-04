@@ -2,7 +2,6 @@
 #define FIBIN_FIBIN_H
 
 #include <iostream>
-#include <cstdint>
 #include <typeinfo>
 #include <cassert>
 
@@ -97,12 +96,6 @@ constexpr var_t Var(const char *str) {
 template<typename ValueType>
 class Fibin {
 private:
-    static constexpr ValueType fib(int N) {
-        if (N == 0) return 0;
-        if (N == 1) return 1;
-        return fib(N - 1) + fib(N - 2);
-    }
-
     template<typename Expression, typename Env>
     struct Eval {
     };
@@ -119,11 +112,15 @@ private:
     struct SumAux<T> {
     };
 
-    template<typename Proc, typename Value, typename Env>
+    template<typename Proc, typename Value>
     struct Apply {
     };
 
     struct EmptyEnv;
+
+    template<typename Lam, typename Env>
+    struct Closure {
+    };
 
     template<var_t Name, typename Value, typename Env>
     struct List {
@@ -149,7 +146,18 @@ private:
 
     template<int N, typename Env>
     struct Get<Fib<N>, Env> {
-        static constexpr ValueType value = fib(N);
+        static_assert(N >= 0);
+        static constexpr ValueType value = Get<Fib<N - 1>, Env>::value + Get<Fib<N - 2>, Env>::value;
+    };
+
+    template<typename Env>
+    struct Get<Fib<1>, Env> {
+        static constexpr ValueType value = 1;
+    };
+
+    template<typename Env>
+    struct Get<Fib<0>, Env> {
+        static constexpr ValueType value = 0;
     };
 
     template<int N, typename Env>
@@ -230,16 +238,17 @@ private:
 
     template<var_t Var, typename Body, typename Env>
     struct Eval<Lambda<Var, Body>, Env> {
+        using result = Closure<Lambda<Var, Body>, Env>;
     };
 
     template<typename Fun, typename Param, typename Env>
     struct Eval<Invoke<Fun, Param>, Env> {
-        using result = typename Apply<Fun, Param, Env>::result;
+        using result = typename Apply<typename Eval<Fun, Env>::result, Param>::result;
     };
 
     template<var_t Var, typename Body, typename Value, typename Env>
-    struct Apply<Lambda<Var, Body>, Value, Env> {
-        using result = typename Eval<Body, List<Var, Value, Env>>::result;
+    struct Apply<Closure<Lambda<Var, Body>, Env>, Value> {
+        using result = typename Eval<Body, List<Var, Value, Env> >::result;
     };
 
 
