@@ -74,6 +74,7 @@ constexpr bool properVar(const char *str) {
 
 constexpr var_t Var(const char *str) {
     assert(properVar(str));
+
     int i = 0;
     var_t res = 0;
     while (i < 6 && str[i] != '\0') {
@@ -140,7 +141,7 @@ private:
 
     template<var_t Name, typename Value, typename Env>
     struct Find<Name, List<Name, Value, Env> > {
-        using result = typename Value::result;
+        using result = typename Eval<Value, Env>::result;
     };
 
     template<var_t Name, var_t Name2, typename Value2, typename Env>
@@ -233,22 +234,20 @@ private:
         using result = typename Eval<If<typename Eval<Condition, Env>::result, Then, Else>, Env>::result;
     };
 
-    // TODO
-    /*template<var_t Var, typename Body>
-    struct Eval<Lambda<Var, Body>> {
+    template<var_t Var, typename Body, typename Env>
+    struct Eval<Lambda<Var, Body>, Env> {
         using result = Closure<Lambda<Var, Body>, Env>;
     };
 
-    template<typename Fun, typename Param>
-    struct Eval<Invoke<Fun, Param>> {
-        using result = Apply<Eval<Fun>::result, Eval<Param>::result>::result
+    template<typename Fun, typename Param, typename Env>
+    struct Eval<Invoke<Fun, Param>, Env> {
+        using result = typename Apply<typename Eval<Fun, Env>::result, typename Eval<Param, Env>::result>::result;
     };
 
-    template<var_t Var, typename Body, typename Value>
+    template<var_t Var, typename Body, typename Value, typename Env>
     struct Apply<Closure<Lambda<Var, Body>, Env>, Value> {
-        typename Eval<Body, Binding < Name, Value, Env> > ::result
-        typedef result;
-    };*/
+        using result = typename Eval<Body, List<Var, Value, Env> >::result;
+    };
 
 
 public:
