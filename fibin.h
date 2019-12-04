@@ -81,9 +81,11 @@ constexpr var_t Var(const char *str) {
         res *= BASE;
         if (str[i] <= '9' && str[i] >= '0') {
             res += str[i] - '0' + 1;
-        } else if (str[i] <= 'Z' && str[i] >= 'A') {
+        }
+        else if (str[i] <= 'Z' && str[i] >= 'A') {
             res += str[i] - 'A' + 11;
-        } else if (str[i] <= 'z' && str[i] >= 'a') {
+        }
+        else if (str[i] <= 'z' && str[i] >= 'a') {
             res += str[i] - 'a' + 11;
         }
         ++i;
@@ -199,10 +201,6 @@ private:
         typedef T2 result;
     };
 
-    static constexpr bool eq(ValueType v1, ValueType v2) {
-        return v1 == v2;
-    }
-
     template<typename T1, typename T2, typename Env>
     struct Eval<Eq<T1, T2>, Env> {
         using result = typename If_then_else<Eval<T1, Env>::result::value ==
@@ -241,7 +239,7 @@ private:
 
     template<typename Fun, typename Param, typename Env>
     struct Eval<Invoke<Fun, Param>, Env> {
-        using result = typename Apply<typename Eval<Fun, Env>::result, typename Eval<Param, Env>::result>::result;
+        using result = typename Apply<typename Eval<Fun, Env>::result, Param>::result;
     };
 
     template<var_t Var, typename Body, typename Value, typename Env>
