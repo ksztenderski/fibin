@@ -2,7 +2,6 @@
 #define FIBIN_FIBIN_H
 
 #include <iostream>
-#include <cstdint>
 #include <typeinfo>
 #include <cassert>
 
