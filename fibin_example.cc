@@ -1,5 +1,4 @@
 #include <iostream>
-#include <type_traits>
 #include "fibin.h"
 
 template<unsigned n>
@@ -7,7 +6,6 @@ using L = Lit<Fib<n>>;
 using FB = Fibin<int>;
 
 void test_fib() {
-
     static_assert(0 == Fibin<int>::eval<L<0>>());
     static_assert(1 == Fibin<int>::eval<L<1>>());
     static_assert(1 == Fibin<int>::eval<L<2>>());
@@ -72,15 +70,42 @@ void test_fib() {
     static_assert(181 == Fibin<uint8_t>::eval<L<29>>());
 }
 
-template<uint64_t n>struct W {using w = Sum<Lit<Fib<6>>,typename W<n-8>::w>;};
-template<>struct W<0>{using w = Lit<Fib<0>>;};
-template<>struct W<1>{using w = Lit<Fib<1>>;};
-template<>struct W<2>{using w = Lit<Fib<3>>;};
-template<>struct W<3>{using w = Lit<Fib<4>>;};
-template<>struct W<4>{using w = Inc1<Lit<Fib<4>>>;};
-template<>struct W<5>{using w = Lit<Fib<5>>;};
-template<>struct W<6>{using w = Inc1<Lit<Fib<5>>>;};
-template<>struct W<7>{using w = Inc1<Inc1<Lit<Fib<5>>>>;};
+template<uint64_t n>
+struct W {
+    using w = Sum<Lit<Fib<6>>, typename W<n - 8>::w>;
+};
+template<>
+struct W<0> {
+    using w = Lit<Fib<0>>;
+};
+template<>
+struct W<1> {
+    using w = Lit<Fib<1>>;
+};
+template<>
+struct W<2> {
+    using w = Lit<Fib<3>>;
+};
+template<>
+struct W<3> {
+    using w = Lit<Fib<4>>;
+};
+template<>
+struct W<4> {
+    using w = Inc1<Lit<Fib<4>>>;
+};
+template<>
+struct W<5> {
+    using w = Lit<Fib<5>>;
+};
+template<>
+struct W<6> {
+    using w = Inc1<Lit<Fib<5>>>;
+};
+template<>
+struct W<7> {
+    using w = Inc1<Inc1<Lit<Fib<5>>>>;
+};
 
 template<uint64_t n>
 using SquareN =
@@ -90,7 +115,7 @@ Lambda<
                 Var("n"),
                 If<
                         Eq<
-                                typename W<n*2-1>::w,
+                                typename W<n * 2 - 1>::w,
                                 Ref<Var("n")>
                         >,
                         Ref<Var("n")>,
@@ -103,20 +128,19 @@ Lambda<
                                                 Lit<Fib<3>>>>>>>>;
 
 
-
-
-int main(){
+int main() {
     test_fib();
 
-    //std::cout << FB::eval<Invoke<SquareN, Lit<Fib<5>>>>() << std::endl;
-
     static_assert(FB::eval<If<Lit<False>, Lit<Fib<10>>, Lit<Fib<11>>>>() == 89);
-    static_assert(FB::eval<If< Eq<L<1>, L<2>>, L<10>, L<11> >>() == 55);
-    static_assert(FB::eval<If< Eq<L<1>, L<3>>, L<10>, L<11> >>() == 89);
-    static_assert(Fibin<uint8_t>::eval<If< Eq<L<32>, L<5>>, L<10>, L<11> >>() == 55);
+    static_assert(FB::eval<If<Eq<L<1>, L<2>>, L<10>, L<11> >>() == 55);
+    static_assert(FB::eval<If<Eq<L<1>, L<3>>, L<10>, L<11> >>() == 89);
+    static_assert(
+            Fibin<uint8_t>::eval<If<Eq<L<32>, L<5>>, L<10>, L<11> >>() == 55);
 
 
-    static_assert(FB::eval<If<If<Lit<False>, Lit<True>, Lit<False>>, Lit<Fib<2>>, Lit<Fib<3>>>>() == 2);
+    static_assert(
+            FB::eval<If<If<Lit<False>, Lit<True>, Lit<False>>, Lit<Fib<2>>, Lit<Fib<3>>>>() ==
+            2);
     static_assert(FB::eval<Sum<Lit<Fib<6>>, Lit<Fib<3>>>>() == 10);
     static_assert(FB::eval<Sum<L<6>, L<3>>>() == 10);
     static_assert(FB::eval<Sum<L<6>, L<3>, L<3>>>() == 12);
@@ -127,25 +151,29 @@ int main(){
 
 
     //using Variable as bool
-    static_assert(5 == Fibin<int16_t>::eval< Let<Var("true"), Lit<True>,
+    static_assert(5 == Fibin<int16_t>::eval<Let<Var("true"), Lit<True>,
             If<Ref<Var("true")>, L<5>, L<3> > >
     >());
 
     //summing two Variables
     static_assert(57 == Fibin<int16_t>::eval<Let<Var("A"), L<10>,
-            Let<Var("asffss"), L<3>, Sum<Ref<Var("A")>, Ref<Var("asffss")>>>>>());
+            Let<Var("asffss"), L<3>, Sum<Ref<Var("A")>, Ref<Var(
+                    "asffss")>>>>>());
 
 
 
     // Testing: if False then Fib(0) else Fib(1)
-    static_assert(1 == Fibin<uint8_t>::eval<If<Lit<False>, Lit<Fib<0>>, Lit<Fib<1>>>>());
+    static_assert(1 ==
+                  Fibin<uint8_t>::eval<If<Lit<False>, Lit<Fib<0>>, Lit<Fib<1>>>>());
 
     // Testing: let z = Fib(0) in {z + Fib(1)}
-    static_assert(1 == Fibin<int16_t>::eval< Let<Var("z"), L<0>, Inc1<Ref<Var("Z")>> >>());
+    static_assert(1 == Fibin<int16_t>::eval<Let<Var("z"), L<0>, Inc1<Ref<Var(
+            "Z")>> >>());
 
 
     // Testing: let z = Fib(0) in {z + Fib(1)}
-    static_assert(1 == Fibin<int16_t>::eval< Let<Var("z"), L<0>, Inc1<Ref<Var("Z")>> >>());
+    static_assert(1 == Fibin<int16_t>::eval<Let<Var("z"), L<0>, Inc1<Ref<Var(
+            "Z")>> >>());
 
     using Scoping =
     Let<
@@ -172,67 +200,47 @@ int main(){
     >;
     static_assert(34 == Fibin<int>::eval<Scoping>());
 
-    static_assert(2 == Fibin<unsigned>::eval<Invoke<Let<Var("x"), Lit<Fib<1>>, Lambda<Var("x"), Ref<Var("x")> > >, Lit<Fib<3>> > >());
+    static_assert(2 == Fibin<unsigned>::eval<Invoke<Let<Var(
+            "x"), Lit<Fib<1>>, Lambda<Var("x"), Ref<Var(
+            "x")> > >, Lit<Fib<3>>> >());
 
-    
 
-    //// TO NIE MUSI
-    /*using FunctionComparison =
-    Let<
+    using Ycombinator =
+    Lambda<
             Var("f"),
-            Lambda<
-                    Var("x"),
-                    Ref<Var("x")>
-            >,
-            If<
-                    Eq<
-                            Ref<Var("f")>,
-                            Ref<Var("F")>
+            Invoke<
+                    Lambda<
+                            Var("x"),
+                            Invoke<
+                                    Ref<Var("x")>,
+                                    Ref<Var("x")>
+                            >
                     >,
-                    L<10>,
-                    L<11>
-            >
-    >;
-    static_assert(55 == FB::eval<FunctionComparison>());*/
+                    Lambda<
+                            Var("x"),
+                            Invoke<
+                                    Ref<Var("f")>,
+                                    Lambda<
+                                            Var("args"),
+                                            Invoke<
+                                                    Invoke<
+                                                            Ref<Var("x")>,
+                                                            Ref<Var("x")>
+                                                    >,
+                                                    Ref<Var("args")>>>>>>>;
 
-        // DO PRZEMYŚLENIA
-//     using Ycombinator =
-//     Lambda<
-//             Var("f"),
-//             Invoke<
-//                     Lambda<
-//                             Var("x"),
-//                             Invoke<
-//                                     Ref<Var("x")>,
-//                                     Ref<Var("x")>
-//                             >
-//                     >,
-//                     Lambda<
-//                             Var("x"),
-//                             Invoke<
-//                                     Ref<Var("f")>,
-//                                     Lambda<
-//                                             Var("args"),
-//                                             Invoke<
-//                                                     Invoke<
-//                                                             Ref<Var("x")>,
-//                                                             Ref<Var("x")>
-//                                                     >,
-//                                                     Ref<Var("args")>>>>>>>;
+    static_assert(
+            Fibin<uint64_t>::eval<Invoke<
+                    Invoke<Ycombinator, SquareN<45>>,
+                    Lit<Fib<1>>
+            >>() == 2025);
 
-//     static_assert(
-//             Fibin<uint64_t>::eval<Invoke<
-//                     Invoke<Ycombinator, SquareN<45>>,
-//                     Lit<Fib<1>>
-//             >>() == 2025);
+    static_assert(
+            Fibin<uint64_t>::eval<Invoke<
+                    Invoke<Ycombinator, SquareN<103>>,
+                    Lit<Fib<1>>
+            >>() == 103 * 103);
 
-//     static_assert(
-//             Fibin<uint64_t>::eval<Invoke<
-//                     Invoke<Ycombinator, SquareN<103>>,
-//                     Lit<Fib<1>>
-//             >>() == 103*103);
-
-        
     // Prints out to std::cout: "Fibin doesn't support: PKc"
-    Fibin<const char*>::eval<Lit<Fib<0>>>();
+    Fibin<const char *>::eval<Lit<Fib<0>>>();
 }
