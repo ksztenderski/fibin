@@ -2,11 +2,12 @@
 #define FIBIN_FIBIN_H
 
 #include <iostream>
+#include <type_traits>
 #include <typeinfo>
 #include <cassert>
 #include <cstdint>
 
-/// Base used for encoding Var.
+/// Base used for encoding Var(36 is enough).
 #define BASE 36
 
 /// Return type of Var.
@@ -47,7 +48,7 @@ template<var_t Var>
 struct Ref {
 };
 
-template<var_t Name, typename Value, typename Expression>
+template<var_t Var, typename Value, typename Expression>
 struct Let {
 };
 
@@ -124,7 +125,7 @@ private:
     struct Apply {
     };
 
-    /// Empty environment
+    /// Empty environment.
     struct EmptyEnv;
 
     /// Used to store current environment for lambda function.
@@ -206,7 +207,7 @@ private:
                 Eval<T, Env>::result::value + Get<SumAux<Rest...>, Env>::value;
     };
 
-    /// Calculates the sum off numbers.
+    /// Calculates the sum.
     template<typename T1, typename T2, typename... Rest, typename Env>
     struct Eval<Sum<T1, T2, Rest...>, Env> {
         using result = Get<SumAux<T1, T2, Rest...>, Env>;
